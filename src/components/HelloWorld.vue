@@ -16,9 +16,9 @@
       </a>
       <hr />
     </div>
-    <div v-if="accesstoken">
+    <!-- <div v-if="accesstoken">
+   
       <p><strong>Patient Id:</strong> {{ patient }}</p>
-
       <strong>Name: </strong>{{ patientdata.name[0].text }}<br />
       <strong>Birth Date: </strong>{{ patientdata.birthDate }} <br />
       <strong>Gender: </strong>{{ patientdata.gender }} <br />
@@ -34,32 +34,49 @@
           {{ telecom.value }}
         </div>
       </div>
-
-      <strong>Address: </strong> <br />
-      <div v-for="address in patientdata.address" :key="address.use">
-        <div class="ml-2">
-          <strong>{{ address.use }} -</strong>
-          {{ address.line.toString() }}, {{ address.city }},
-          {{ address.district }}, {{ address.state }}, {{ address.postalCode }},
-          {{ address.country }}
-          <span v-if="address.period?.start"><strong>From</strong></span>
-          {{ address.period?.start }}
-        </div>
-      </div>
-
-      <strong>Language: </strong
-      >{{ patientdata.communication[0].language.coding[0].display }} <br />
-
-      <strong>General Practitioner </strong
-      >{{ patientdata.generalPractitioner[0].display }}<br />
-      <strong>Managing Organization </strong
-      >{{ patientdata.managingOrganization.display }}<br />
-      <hr />
-      <strong>Access code:</strong>
-      <p class="ml-2" style="word-break: break-all">{{ accesstoken }}</p>
-      <strong>Patient Resource:</strong>
-      <pre>{{ patientdata }}</pre>
+    <hr />
+    <strong>Access code:</strong>
+    <p class="ml-2" style="word-break: break-all">{{ accesstoken }}</p>
+    <strong>Patient Resource:</strong>
+    <pre>{{ patientdata }}</pre>
+</div> -->
+<div v-if="accesstoken">
+    <p><strong>Age:</strong> {{ patientdata.birthDate }} <br /></p>
+    <strong>Sex: </strong>{{ patientdata.gender === 'male' ? 'Male' : 'Female' }} <br />
+    <strong>Vitals:</strong><br />
+    <div class="ml-2">
+        <strong>Blood Pressure:</strong> {{ patientdata.bloodPressure }} <br />
+        <strong>Respiratory Rate:</strong> {{ patientdata.respiratoryRate }} <br />
+        <strong>Heart Rate:</strong> {{ patientdata.heartRate }} <br />
+        <strong>Oxygen Saturation:</strong> {{ patientdata.oxygenSaturation }} <br />
     </div>
+
+    <strong>Labs:</strong><br />
+    <div class="ml-2">
+        <strong>Blood Urea Nitrogen (BUN):</strong> {{ patientdata.bloodUreaNitrogen }} <br />
+        <strong>Creatinine:</strong> {{ patientdata.creatinine }} <br />
+        <strong>Hemoglobin:</strong> {{ patientdata.hemoglobin }} <br />
+    </div>
+
+    <strong>Medications:</strong> {{ patientdata.medications }} <br />
+    <strong>Diagnosis/Problem List:</strong> {{ patientdata.diagnosis }} <br />
+
+    <strong>Interpretation of Data:</strong><br />
+    <div class="ml-2">
+        <strong>Example:</strong><br />
+        <strong>Criteria:</strong> Age &gt; 65, BP &lt; 90, RR &gt; 30, BUN &gt; 19 and confusion <br />
+        <strong>Interpretation:</strong> 
+        <span v-if="patientdata.age &gt; 65 &amp;&amp; patientdata.bloodPressure &lt; 90 &amp;&amp; patientdata.respiratoryRate &gt; 30 &amp;&amp; patientdata.bloodUreaNitrogen &gt; 19 &amp;&amp; patientdata.confusion">3 or more out of 5 – Interpret as severe.</span>
+        <span v-else>1-2 out of 5 – interpret as Mild.</span>
+    </div>
+
+    <hr />
+    <strong>Access code:</strong>
+    <p class="ml-2" style="word-break: break-all">{{ accesstoken }}</p>
+    <strong>Patient Resource:</strong>
+    <pre>{{ patientdata }}</pre>
+</div>
+
   </div>
 </template>
 
@@ -73,7 +90,7 @@ export default {
       accesstoken: "",
       patient: "",
       patientdata: {},
-      clientId: "42f3b173-16a8-4c50-a3ea-0269294cb869", // Replace with your client id
+      clientId: "a28e02c7-c28c-4443-ae2d-a577a1addacd", // Replace with your client id
       redirect: import.meta.env.PROD
         ? "https://lucid-wozniak-940eae.netlify.app"
         : "http://localhost:3000",
@@ -81,7 +98,8 @@ export default {
   },
   computed: {
     authorizeLink() {
-      return `https://fhir.epic.com/interconnect-fhir-oauth/oauth2/authorize?response_type=code&redirect_uri=${this.redirect}&client_id=${this.clientId}&state=1234&scope=patient.read, patient.search`;
+      return `https://fhir.epic.com/interconnect-fhir-oauth/oauth2/authorize?response_type=code&redirect_uri=${this.redirect}&client_id=${this.cl
+        ientId}&state=1234&scope=patient.read, patient.search`;
     },
   },
   async mounted() {
